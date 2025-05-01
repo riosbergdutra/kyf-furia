@@ -1,0 +1,43 @@
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: furia-db
+    environment:
+      POSTGRES_DB: usuarios
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - furia-network
+
+  app:
+    build: .
+    container_name: furia-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://furia-db:5432/usuarios
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_APPLICATION_NAME: furia
+      JWT_PUBLIC_KEY: classpath:app.pub
+      JWT_PRIVATE_KEY: classpath:app.key
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    ports:
+      - "8082:8082"
+    networks:
+      - furia-network
+
+volumes:
+  postgres_data:
+
+networks:
+  furia-network:
+    driver: bridge
