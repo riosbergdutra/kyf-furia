@@ -1,5 +1,6 @@
 package com.kyf.furia.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -17,13 +18,16 @@ import lombok.Setter;
 public class Documento {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(unique = true, name = "id_documento")
-    private UUID idDocumento;
+    private UUID id;
 
     @ManyToOne
-    private Usuario idUsuario;
+    private Usuario usuario; // Relacionamento corrigido (não use "idUsuario")
 
-    private String arquivoPath; // Caminho do arquivo salvo
-    private Boolean valido; // Resultado da validação com IA
+    private String tipoDocumento; // Ex: "RG", "CPF", "CNH"
+    private String caminhoArquivo; // Path no sistema de arquivos ou S3
+    private Boolean valido; // Resultado da validação
+    
+    @Column(updatable = false)
+    private LocalDateTime dataUpload = LocalDateTime.now();
 }
 

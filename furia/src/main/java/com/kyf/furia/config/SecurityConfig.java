@@ -23,7 +23,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -31,7 +30,7 @@ public class SecurityConfig {
 
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
-      @Value("${jwt.private.key}")
+    @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
 
     /**
@@ -45,15 +44,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                       
-                       // Endpoints do usuário
-                       .requestMatchers(HttpMethod.POST, "/usuario/user/register").permitAll()
-                       .requestMatchers(HttpMethod.POST, "/usuario/auth/login").permitAll()
-                       .requestMatchers(HttpMethod.DELETE, "/usuario/user/delete").authenticated()
-                       .requestMatchers(HttpMethod.POST, "/usuario/auth/refresh").permitAll()
 
-
-
+                        // Endpoints do usuário
+                        .requestMatchers(HttpMethod.POST, "/usuario/user/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/usuario/user/delete").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/usuario/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/documentos").authenticated()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
@@ -72,7 +69,7 @@ public class SecurityConfig {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
-     @Bean
+    @Bean
     public JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
         var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
